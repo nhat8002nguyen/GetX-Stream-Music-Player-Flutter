@@ -1,6 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:music_player_fluttter/controllers/player_controller.dart';
 import 'package:sizer/sizer.dart';
@@ -274,14 +273,15 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             IconButton(
-                                onPressed: () {
-                                  playerController.next();
-                                },
-                                iconSize: 35.sp,
-                                icon: Icon(
-                                  Icons.skip_next,
-                                  color: Colors.white,
-                                )),
+                              onPressed: () {
+                                playerController.next();
+                              },
+                              iconSize: 35.sp,
+                              icon: Icon(
+                                Icons.skip_next,
+                                color: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                       )
