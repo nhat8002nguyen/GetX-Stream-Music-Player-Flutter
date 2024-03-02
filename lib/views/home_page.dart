@@ -33,25 +33,10 @@ class HomePage extends StatelessWidget {
                     Text(
                       "Music Player",
                       style: TextStyle(
-                        fontSize: 35.sp,
+                        fontSize: 20.sp,
                         fontFamily: "Segoe UI",
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        if (await canLaunch("https://github.com/vellt"))
-                          await launch("https://github.com/vellt");
-                      },
-                      child: Text(
-                        "GitHub/vellt",
-                        style: TextStyle(
-                          fontSize: 17.sp,
-                          fontFamily: "Segoe UI",
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF71B77A),
-                        ),
                       ),
                     ),
                   ],
@@ -143,7 +128,7 @@ class HomePage extends StatelessWidget {
                                           children: [
                                             Text(
                                               playerController
-                                                  .streams[index].composer!,
+                                                  .streams[index].channel!,
                                               style: TextStyle(
                                                 fontSize: 13.sp,
                                                 color: Color(0xFFACACAC),

@@ -45,7 +45,7 @@ class PlayerController extends GetxController {
   //play
   void resume() async {
     int result =
-        await _advancedPlayer.play(streams[currentStreamIndex.value].music!);
+        await _advancedPlayer.play(streams[currentStreamIndex.value].url!);
     if (result == 1) ; //success
   }
 

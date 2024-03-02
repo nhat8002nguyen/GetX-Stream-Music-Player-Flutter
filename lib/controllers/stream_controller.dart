@@ -1,99 +1,53 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:music_player_fluttter/common/utils.dart';
 import 'package:music_player_fluttter/models/stream.dart';
+import 'package:http/http.dart' as http;
 
 class StreamController extends GetxController {
   var streams = <Stream>[].obs;
 
   @override
-  void onInit() {
-    // TODO: implement onInit
+  void onInit() async {
     super.onInit();
-    fetchStreams();
+    var data = await fetchStreams(
+        "http://192.168.1.75:9090/videos/search?text=Anh nang cua anh&amount=20");
+
+    final items = <Stream>[];
+    for (var item in data["data"]) {
+      final String title = item["title"];
+      final String channel = item["channel"];
+      final stream = Stream(
+        id: item["id"],
+        title: title.length < 20 ? title : title.substring(0, 20) + "...",
+        channel:
+            channel.length < 14 ? channel : channel.substring(0, 14) + "...",
+        url: item["url"],
+        picture: item["thumbnail"]["url"],
+        long: iso8601ToTimeFormat(item["duration"]),
+      );
+
+      items.add(stream);
+    }
+    streams.value = items;
   }
 
-  void fetchStreams() {
-    var serverResponse = [
-      Stream(
-        id: 0,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1890852&format=mp31&from=izRhaNivMlU8qItY0q5PUQ%3D%3D%7CGAambexECRa2R2IVTq551g%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=457719&width=300&trackid=1890852",
-        composer: "Nick Ray",
-        title: "Break Away",
-        long: "04:01",
-      ),
-      Stream(
-        id: 1,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1883450&format=mp31&from=c0s9nvpfEfRsUsG67crJOg%3D%3D%7CS7btAC1Vtvt5dLWkhxZNRQ%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=453894&width=300&trackid=1883450",
-        composer: "The Silhouet",
-        title: "Burnin Down Love",
-        long: "03:39",
-      ),
-      Stream(
-        id: 2,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1436621&format=mp31&from=gP3CPq3BmSQzyrJ5FUUl4Q%3D%3D%7CpVBJX6YFBOF2oxm1usFMyw%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=257320&width=300&trackid=1436621",
-        composer: "Alex Cohen",
-        title: "Good Old Times",
-        long: "02:25",
-      ),
-      Stream(
-        id: 3,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1783659&format=mp31&from=NGE4zJ9mz4vRnZwmWj%2FQdA%3D%3D%7C6XGo4hVMOuV5wv16tMgh6w%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=195809&width=300&trackid=1783659",
-        composer: "Carter Vail",
-        title: "Love-15",
-        long: "03:19",
-      ),
-      Stream(
-        id: 4,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1890852&format=mp31&from=izRhaNivMlU8qItY0q5PUQ%3D%3D%7CGAambexECRa2R2IVTq551g%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=457719&width=300&trackid=1890852",
-        composer: "Nick Ray",
-        title: "Break Away",
-        long: "04:01",
-      ),
-      Stream(
-        id: 5,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1883450&format=mp31&from=c0s9nvpfEfRsUsG67crJOg%3D%3D%7CS7btAC1Vtvt5dLWkhxZNRQ%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=453894&width=300&trackid=1883450",
-        composer: "The Silhouet",
-        title: "Burnin Down Love",
-        long: "03:39",
-      ),
-      Stream(
-        id: 6,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1436621&format=mp31&from=gP3CPq3BmSQzyrJ5FUUl4Q%3D%3D%7CpVBJX6YFBOF2oxm1usFMyw%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=257320&width=300&trackid=1436621",
-        composer: "Alex Cohen",
-        title: "Good Old Times",
-        long: "02:25",
-      ),
-      Stream(
-        id: 7,
-        music:
-            "https://mp3l.jamendo.com/?trackid=1783659&format=mp31&from=NGE4zJ9mz4vRnZwmWj%2FQdA%3D%3D%7C6XGo4hVMOuV5wv16tMgh6w%3D%3D",
-        picture:
-            "https://usercontent.jamendo.com/?type=album&id=195809&width=300&trackid=1783659",
-        composer: "Carter Vail",
-        title: "Love-15",
-        long: "03:19",
-      ),
-    ];
-    streams.value = serverResponse;
+  Future<dynamic> fetchStreams(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Parse the response body (e.g., JSON)
+        final data = jsonDecode(response.body);
+        return data;
+      } else {
+        // Handle error (e.g., throw an exception)
+        throw Exception('Failed to load data from $url');
+      }
+    } catch (error) {
+      // Handle general errors
+      throw Exception('Error: $error');
+    }
   }
 }
